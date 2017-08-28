@@ -9,17 +9,6 @@ angular.module('signature').directive('signaturePad', ['$interval', '$timeout', 
   function ($interval, $timeout, $window) {
     'use strict';
 
-    var EMPTY_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA'+
-    'jgAAADcCAQAAADXNhPAAAACIklEQVR42u3UIQEAAAzDsM+/6UsYG0okFDQHMBIJAMMBDAfAcADDATAcwHAAwwEwH'+
-    'MBwAAwHMBzAcAAMBzAcAMMBDAcwHADDAQwHwHAAwwEMB8BwAMMBMBzAcADDATAcwHAADAcwHADDAQwHMBwAwwEMB'+
-    '8BwAMMBDAfAcADDATAcwHAAwwEwHMBwAAwHMBzAcAAMBzAcAMMBDAcwHADDAQwHwHAAwwEwHMBwAMMBMBzAcAAMB'+
-    'zAcwHAADAcwHADDAQwHMBwAwwEMB8BwAMMBDAfAcADDATAcwHAAwwEwHMBwAAwHMBzAcCQADAcwHADDAQwHwHAAw'+
-    'wEMB8BwAMMBMBzAcADDATAcwHAADAcwHMBwAAwHMBwAwwEMBzAcAMMBDAfAcADDAQwHwHAAwwEwHMBwAAwHMBzAc'+
-    'AAMBzAcAMMBDAcwHADDAQwHwHAAwwEMB8BwAMMBMBzAcADDATAcwHAADAcwHMBwAAwHMBwAwwEMB8BwAMMBDAfAc'+
-    'ADDATAcwHAAwwEwHMBwAAwHMBzAcAAMBzAcAMMBDAcwHADDAQwHwHAAwwEMB8BwAMMBMBzAcADDkQAwHMBwAAwHM'+
-    'BwAwwEMBzAcAMMBDAfAcADDAQwHwHAAwwEwHMBwAMMBMBzAcAAMBzAcwHAADAcwHADDAQwHMBwAwwEMB8BwAMMBM'+
-    'BzAcADDATAcwHAADAcwHMBwAAwHMBwAwwEMBzAcAMMBDAegeayZAN3dLgwnAAAAAElFTkSuQmCC';
-
     return {
       restrict: 'EA',
       replace: true,
@@ -27,7 +16,6 @@ angular.module('signature').directive('signaturePad', ['$interval', '$timeout', 
       ' max-height:{{height}}px;"><canvas style="display: block; margin: 0 auto;"'+
       'ng-mouseup="onMouseup()" ng-mouseleave="onMouseup()"></canvas></div>',
       scope: {
-        accept: '=?',
         clear: '=?',
         disabled: '=?',
         dataurl: '=?',
@@ -42,32 +30,26 @@ angular.module('signature').directive('signaturePad', ['$interval', '$timeout', 
         '$scope',
         function ($scope) {
 
-          $scope.accept = function () {
-            return {
-              isEmpty: $scope.dataurl === EMPTY_IMAGE,
-              dataUrl: $scope.dataurl
-            };
-          };
-
           $scope.dataurl = $scope.fieldForm[$scope.fieldId];
           $scope.dataUrl = $scope.dataurl;
 
           $scope.onMouseup = function () {
             $scope.updateModel();
-            $scope.notifyDrawing({ drawing: false });
           };
 
           $scope.updateModel = function () {
             $timeout(function(){
-              $scope.dataurl = $scope.signaturePad.isEmpty() ? EMPTY_IMAGE : $scope.signaturePad.toDataURL();
-              $scope.fieldForm[$scope.fieldId] = $scope.dataurl;
+              if(!$scope.signaturePad.isEmpty())
+              {
+                $scope.dataurl = $scope.signaturePad.toDataURL();
+                $scope.fieldForm[$scope.fieldId] = $scope.dataurl;
+              }
             });
           };
 
           $scope.clear = function () {
             delete $scope.fieldForm[$scope.fieldId];
             $scope.signaturePad.clear();
-            $scope.dataurl = EMPTY_IMAGE;
           };
 
           $scope.$watch('dataurl', function (dataUrl) {
