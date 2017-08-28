@@ -5,7 +5,7 @@
 
 angular.module('signature', []);
 
-angular.module('smartApp').directive('signaturePad', ['$interval', '$timeout', '$window',
+angular.module('signature').directive('signaturePad', ['$interval', '$timeout', '$window',
   function ($interval, $timeout, $window) {
     'use strict';
 
