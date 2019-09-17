@@ -24,12 +24,12 @@ angular.module('signature').directive('signaturePad', ['$interval', '$timeout', 
         fieldForm: '=',
         fieldId: '=',
         notifyDrawing: '&onDrawing',
-        displayOnly: '='
+        displayOnly: '=',
+        repeatedSignature: '=?'
       },
       controller: [
         '$scope',
         function ($scope) {
-
           $scope.dataurl = $scope.fieldForm[$scope.fieldId];
           $scope.dataUrl = $scope.dataurl;
 
@@ -59,17 +59,27 @@ angular.module('signature').directive('signaturePad', ['$interval', '$timeout', 
 
             $scope.setDataUrl(dataUrl);
           });
+
+          $scope.$watch('fieldForm', function () {
+            $scope.dataurl = $scope.fieldForm[$scope.fieldId];
+            $scope.dataUrl = $scope.dataurl;
+          });
         }
       ],
       link: function (scope, element) {
         scope.width = $('.signatureWrapper').width()-26;
+
+        if (scope.repeatedSignature) {
+          scope.width = $('.repeated-signature').width();
+          scope.height = $('.signatureWrapper canvas').first().height();
+        }
 
         var canvas = element.find('canvas')[0];
         var parent = canvas.parentElement;
         var scale = 0;
         var ctx = canvas.getContext('2d');
 
-        var width = parseInt(scope.width-26, 10);
+        var width = scope.repeatedSignature ? parseInt(scope.width, 10) : parseInt(scope.width-26, 10);
         var height = parseInt(scope.height, 10);
 
         canvas.width = width;
